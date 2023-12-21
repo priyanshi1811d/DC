@@ -1,0 +1,66 @@
+#udcprefix
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+    
+    string codes[] = { "0", "01", "011", "011"};
+    string dangling[100];
+    int dangIndex = 0;
+    int len = sizeof(codes)/sizeof(codes[0]);
+    bool isPreFix = true, isUDC = true;
+
+    for(int i=0; i<len && isPreFix; i++)
+    {
+        for(int j=0; j<len && isPreFix; j++)
+        {
+            string pre = codes[i];
+            string str = codes[j];
+
+            if(pre.length() < str.length() && str.compare(0, pre.size(), pre) == 0)
+                isPreFix = false;
+        }
+    }
+
+    if(isPreFix)
+    {
+        cout<<"Code is Prefix :)"<<endl<<"Code is UDC :)";
+        return 0;
+    }
+    else
+        cout<<endl<<"Code is not Prefix :(";
+
+
+    for(int i=0; i<len; i++)
+    {
+        for(int j=0; j<len; j++)
+        {
+            string pre = codes[i];
+            string str = codes[j];
+
+            if(pre.length() < str.length() && str.compare(0, pre.size(), pre) == 0)
+                dangling[dangIndex++] = str.substr(pre.length(), str.length() - pre.length());
+        }
+    }
+
+    for(int i=0; i<len && isUDC; i++)
+    {
+        for(int j=0; j<=dangIndex && isUDC; j++)
+        {
+            if(codes[i] == dangling[j])
+                isUDC = false;
+        }
+    }
+
+    if(isUDC)
+    {
+        cout<<endl<<"Code is UDC :)";
+    }
+    else
+        cout<<endl<<"Code is not UDC :(";
+
+    return 0;
+}
+

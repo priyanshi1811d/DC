@@ -1,0 +1,21 @@
+#arithmetic
+#include<stdio.h>
+#include<math.h>
+int main()
+{
+ char str[]="BILL GATES";
+ float high=1.0, low=0.0;
+ int i,n;
+ float range;
+ i=0;
+ while(str[i]!='\0')
+ {
+ n=str[i];
+ range=high-low;
+ high=low+(range*(n+1))/256;
+ low=low+(range*n)/256;
+ i++;
+ } 
+printf("The arithmetic encoded value for %s is %f",str,low);
+ return 0;
+}

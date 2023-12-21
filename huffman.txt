@@ -1,0 +1,136 @@
+#huffman
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+static int *total;
+typedef struct node
+{
+    char ch;
+    int freq;
+    struct node *left;
+    struct node *right;
+} node;
+node *heap[100];
+int heapSize = 0;
+void Insert(node *element)
+{
+    heapSize++;
+    heap[heapSize] = element;
+    int now = heapSize;
+    while (heap[now / 2]->freq > element->freq)
+    {
+        heap[now] = heap[now / 2];
+        now /= 2;
+    }
+    heap[now] = element;
+}
+node *DeleteMin()
+{
+    node *minElement, *lastElement;
+    int child, now;
+    minElement = heap[1];
+    lastElement = heap[heapSize--];
+    for (now = 1; now * 2 <= heapSize; now = child)
+    {
+        child = now * 2;
+        if (child != heapSize && heap[child + 1]->freq < heap[child]->freq)
+        {
+            child++;
+        }
+        if (lastElement->freq > heap[child]->freq)
+        {
+            heap[now] = heap[child];
+        }
+        else
+        {
+            break;
+        }
+    }
+    heap[now] = lastElement;
+    return minElement;
+}
+void print(node *temp, char *code)
+{
+    if (temp->left == NULL && temp->right == NULL)
+    {
+        printf("%c\t\t%.2f\t\t%s\n", temp->ch, (float)temp->freq / (*total), code);
+        return;
+    }
+    int length = strlen(code);
+    char leftcode[10], rightcode[10];
+    strcpy(leftcode, code);
+    strcpy(rightcode, code);
+    leftcode[length] = '0';
+    leftcode[length + 1] = '\0';
+    rightcode[length] = '1';
+    rightcode[length + 1] = '\0';
+    print(temp->left, leftcode);
+    print(temp->right, rightcode);
+}
+int main()
+{
+    FILE *ptr = fopen("prac2.txt", "r");
+    char ch, uniq[1000] = {0};
+    int count = 0, frq[100] = {0}, n = 0, flag = 0;
+    for (int i = 0;; i++)
+    {
+        ch = fgetc(ptr);
+        if (feof(ptr))
+        {
+            break;
+        }
+        printf("%c", ch);
+        flag = 0;
+        for (int j = 0; j < i; j++)
+        {
+            if (uniq[j] == ch)
+            {
+                frq[j]++;
+                flag = 1;
+                break;
+            }
+        }
+        count++;
+        if (flag == 0)
+        {
+            uniq[n] = ch;
+            frq[n]++;
+            n++;
+        }
+    }
+    total = &count;
+    printf("\n%d chars\n", count);
+    heap[0] = (node *)malloc(sizeof(node));
+    heap[0]->freq = 0;
+    for (int i = 0; i < n; i++)
+    {
+        node *temp = (node *)malloc(sizeof(node));
+        temp->ch = uniq[i];
+        temp->freq = frq[i];
+        temp->left = temp->right = NULL;
+        Insert(temp);
+    }
+    if (n == 1)
+    {
+        printf("%c\t\t1\t\t0\n", ch);
+        return 0;
+    }
+    for (int i = 0; i < n - 1; i++)
+    {
+        node *left = DeleteMin();
+        node *right = DeleteMin();
+        node *temp = (node *)malloc(sizeof(node));
+        temp->ch = 0;
+        temp->left = left;
+        temp->right = right;
+        temp->freq = left->freq + right->freq;
+        Insert(temp);
+    }
+    node *tree = DeleteMin();
+    char code[20];
+    code[0] = '\0';
+    printf("\nLetter\t\tProbability\tCode\n");
+    print(tree, code);
+fclose(ptr);
+return 0;
+}

@@ -1,0 +1,57 @@
+#frequency,prob,info,entropy
+
+#include <iostream>
+#include <fstream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    
+    ifstream MyReadFile("prac1.txt");
+    int n=0;
+
+    //Counting characters
+    while(MyReadFile){
+        cout<<char(MyReadFile.get());
+        n++;
+    }
+    n-=1;
+    MyReadFile.close();
+    MyReadFile.clear();
+    int elem[n+1]={-10},freq[n]={0},i=0,f=0;
+    MyReadFile.open("prac1.txt");
+    cout<<endl<<"Array:"<<endl;
+    while(MyReadFile){
+        int temp = MyReadFile.get();
+        if(temp != 10){
+             for(int j=0; j<=i; j++){if(elem[j]==temp) f = 1;}
+             if(f!=1){elem[i]=temp; i++;}
+             else f = 0;
+        }
+    }
+    MyReadFile.close();
+    MyReadFile.clear();
+
+//    for(int i=0;i<n-1;i++){
+//        cout<<char(elem[i]);
+//    }
+
+    MyReadFile.open("prac1.txt");
+    while(MyReadFile){
+        int temp=MyReadFile.get();
+        for(int i=0;i<n-1;i++){
+            if(temp==elem[i]){
+                freq[i]+=1;
+            }
+        }
+    }
+
+    double entropy=0;
+    for(int i=0;i<n-1;i++){
+        cout<<endl<<char(elem[i])<<" : "<<freq[i]<<"\tProbablity: "<< double(freq[i])/n<<"\t Information Content: "<<log2(double(freq[i])/n)<<endl;
+        entropy+=log2(double(freq[i])/n);
+    }
+    cout<<endl<<"Entropy: "<< entropy;
+    return 0;
+}
+
